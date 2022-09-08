@@ -1,18 +1,29 @@
 <template>
-  <v-container class="about">
+  <v-container class="about mb-5">
   <h1>{{total}}</h1>
   <LoadingSpinner v-if="loading"></LoadingSpinner>
   <v-data-iterator
-    :items="data"
+    :items="beers"
     :items-per-page.sync="itemsPerPage"
     :page.sync="page"
     :search="search"
     :sort-by="sortBy.toLowerCase()"
     :sort-desc="sortDesc"
+    hide-default-footer
     
   >
+  
     <template v-slot:header>
       <v-toolbar dark color="secondary" class="my-2">
+      <v-text-field
+            v-model="filters.abv"
+            clearable
+            flat
+            solo-inverted
+            hide-details
+            prepend-inner-icon="mdi-magnify"
+            label="Search"
+          ></v-text-field>
         <v-text-field
             v-model="search"
             clearable
@@ -79,7 +90,7 @@
       </v-row>
     </template>
     <template v-slot:footer>
-      <v-row
+        <v-row
           class="mt-2"
           align="center"
           justify="center"
@@ -116,14 +127,14 @@
             class="mr-4
             grey--text"
           >
-            <!-- Page {{ page }} of {{ numberOfPages }} -->
+            Page {{ page}} of {{ numberOfPages }}
           </span>
           <v-btn
             fab
             dark
             color="blue darken-3"
             class="mr-1"
-            
+            @click="formerPage"
           >
             <v-icon>mdi-chevron-left</v-icon>
           </v-btn>
@@ -137,7 +148,7 @@
             <v-icon>mdi-chevron-right</v-icon>
           </v-btn>
         </v-row>
-    </template>
+      </template>
   </v-data-iterator>
   </v-container>
   
@@ -151,42 +162,63 @@ import { defineComponent } from "vue";
 import BeerCard from "@/components/BeerCard.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
-import { useStore, } from '@/use/useStore';
+// import { useStore, getAllData } from '@/use/useStore';
 
-const {getBeers} = useStore()
+// const {getBeers} = useStore()
 export default defineComponent({
     name: "AboutView",
     components: { BeerCard, LoadingSpinner },
     data() {
         return {
-            data: [],
-            itemsPerPageArray: [5, 10, 15],
+            itemsPerPageArray: [4, 8, 12],
             search: '',
             filter: {},
+            filters: {},
             sortDesc: false,
             page: 1,
-            itemsPerPage: 10,
+            keys: [
+              'name',
+              'abv'
+            ],
+            itemsPerPage: 12,
             sortBy: 'name',
             loading: false
         };
     },
     created() {
-        // this.getData();
-        this.data = getBeers()
+        
+    },
+    watch: {
+      filters:{
+        deep: true,
+        handler(filters){
+          this.$store.commit('setFilters', filters)
+        }
+      }
     },
     methods: {
         
 
         nextPage(){
-
-        }
+          if (this.page + 1 <= this.numberOfPages) this.page += 1
+        },
+        formerPage () {
+        if (this.page - 1 >= 1) this.page -= 1
+      },
+      updateItemsPerPage (number) {
+        this.itemsPerPage = number
+      },
     },
     computed: {
+      
+      beers(){
+        return this.$store.getters.filteredBeers
+      },
       numberOfPages(){
-        return Math.ceil(this.data.length / this.itemsPerPage)
+        return Math.ceil(this.beers.length / this.itemsPerPage)
       },
       total(){
-        return `${this.data.length} beers`;
+        return `${this.beers.length} beers`;
       }
     },
 })
