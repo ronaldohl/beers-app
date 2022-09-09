@@ -8,9 +8,12 @@ export default new Vuex.Store({
   state: {
     beers : [],
     filters: {
-      abv : 4.5
+      abv : '',
+      attenuation_level : '',
+      ebc: '',
+      ibu: ''
     },
-    
+    loading: false
   },
   getters: {
     filteredBeers(state){
@@ -18,8 +21,8 @@ export default new Vuex.Store({
       for (const key in state.filters) {
         const value = state.filters[key]
         if(value){
-          // [{abv: ''}]
           beers = beers.filter(beer => {
+            //cambiar comparador segun key
             return beer[key] == value
           })
         }
@@ -37,25 +40,25 @@ export default new Vuex.Store({
   },
   actions: {
     async  getAllData(state) {
-      // this.loading = true;
+      state.loading = true;
       // ...mapActions(['setBeers'])
       let page = 1
       let beers = []
       let dataWithResults = true 
-          while(dataWithResults){
-              //per_page=80 es el máximo aceptado por la API
-              let data = await make(`/beers?page=${page}&per_page=80`);
-              if(data.length > 0){
-                  beers.push(...data);
-                  //commit setData
-                  page++
-              }else {
-                  dataWithResults = false
-                  // this.loading = false
-                  // return
-              }
-          }
+      while(dataWithResults){
+        //per_page=80 es el máximo aceptado por la API
+        let data = await make(`/beers?page=${page}&per_page=80`);
+        if(data.length > 0){
+            beers.push(...data);        
+            page++
+        }else {
+            dataWithResults = false
+      
+        }
+      }      
       state.commit('setBeers', beers)
+      state.loading = false
+      
   
       // console.log('store:  ', store.state.beers)
           
