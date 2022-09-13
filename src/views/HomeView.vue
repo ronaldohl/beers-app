@@ -78,7 +78,7 @@
             :ebc="beer.ebc"
             :ibu="beer.ibu"
             :food_pairing="beer.food_pairing"
-            :ingredientes="beer.ingredientes"
+            :ingredients="beer.ingredients"
             :ph="beer.ph"
             :srm="beer.srm"
             :tagline="beer.tagline"

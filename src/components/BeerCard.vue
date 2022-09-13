@@ -46,7 +46,7 @@
         </v-row>
         <v-card-text>
             <div class="grey--text text-justify ms-4">
-                <p v-snip="{lines:5}">{{description}}</p>
+                <p v-snip="{lines:4}">{{description}}</p>
             </div>
         </v-card-text>
         <v-card-actions>
@@ -64,12 +64,11 @@
                 </v-card-text>
                 <v-card-text>
                     {{description}}
-                </v-card-text>
-                
+                </v-card-text>               
                 <v-card-actions>
                     <v-btn text color="primary" @click.prevent="reveal = false">
-                Close
-            </v-btn>
+                        Close
+                    </v-btn>
                 </v-card-actions>
             </v-card>
         </v-expand-transition>
@@ -97,7 +96,7 @@ export default defineComponent({
         ebc: Number,
         ibu: Number,
         food_pairing: Array,
-        ingredientes: Object,
+        ingredients: Object,
         ph: Number,
         srm: Number,
         tagline : String
@@ -117,5 +116,8 @@ export default defineComponent({
         opacity: 1 !important;
         position: absolute;
         width: 100%;
+    }
+    .flex-wrap{
+        flex-wrap: wrap;
     }
 </style>
